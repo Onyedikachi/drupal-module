@@ -7,3 +7,4 @@ configuration:
       - json
     supported_auth:
       - basic_auth
+      - cookie
