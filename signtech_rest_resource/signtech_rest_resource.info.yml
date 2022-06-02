@@ -1,0 +1,6 @@
+name: SignTech REST Resource
+description: Define's a custom REST Resource
+package: Custom
+type: module
+core_version_requirement: ^8.8 || ^9
+# core: ^9
