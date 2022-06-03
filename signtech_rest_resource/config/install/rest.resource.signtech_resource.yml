@@ -8,9 +8,9 @@ configuration:
     supported_auth:
       - basic_auth
       - cookie
-  # POST:
-  #     supported_formats:
-  #       - json
-  #     supported_auth:
-  #       - basic_auth
-  #       - cookie
+  POST:
+      supported_formats:
+        - json
+      supported_auth:
+        - basic_auth
+        - cookie
