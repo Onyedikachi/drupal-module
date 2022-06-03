@@ -5,6 +5,8 @@ namespace Drupal\signtech_rest_resource\Plugin\rest\resource;
 use Drupal\rest\Plugin\ResourceBase;
 use Drupal\rest\ResourceResponse;
 use Drupal\user\Entity\User;
+use Drupal\Component\Serialization\Json;
+use Symfony\Component\HttpFoundation\Request;
 
 
 /**
@@ -48,10 +50,26 @@ class SigntechResource extends ResourceBase {
 
     return new ResourceResponse($response);
   }
-  // function post($data){
-
-  //   //Create new user
-  //   print_r($data);
-
+  // public function post(Request $request) {
+  //   $query = \Drupal::request()->query;
+  //   $response = [];
+  //   $params = Json::decode($request->getContent());
+  //   extract($params);
+  //   if($name!='' && $email!=''){
+  //     $response["ServerMsg"]=[
+  //         "your_name" => $name,
+  //         "your_email" => $email,
+  //         "Msg" => "SUCCESS",
+  //         "DisplayMsg" => "Rest message for post"
+  //     ];
+  //   }
+  //   else{
+  //     $response["ServerMsg"]=[
+  //         "Msg" => "Failure",
+  //         "DisplayMsg" => "Rest message for post",
+  //         "DisplayMsg1" => "Name & Email is required"
+  //     ];
+  //   }
+  //   return new ResourceResponse($response);
   // }
 }
