@@ -5,12 +5,14 @@ configuration:
   GET:
     supported_formats:
       - json
+      - form
     supported_auth:
       - basic_auth
       - cookie
   POST:
       supported_formats:
         - json
+        - form
       supported_auth:
         - basic_auth
         - cookie

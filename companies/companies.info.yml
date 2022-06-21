@@ -1,0 +1,6 @@
+name: Companies
+type: module
+description: 'Companies in SignTech'
+package: custom
+# core: 8.x
+core_version_requirement: ^8.8 || ^9
