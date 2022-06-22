@@ -522,7 +522,7 @@ class SigntechResource extends ResourceBase {
         'company' => ''
       );
       // Check if get required parameters.
-      if (!empty($args['pass']) && !empty($args['mail']) &&
+      if (!empty($args['mail']) &&
           !empty($args['language']) && !empty($args['company'])) {
         // Check if exist user name or user mail.
 
@@ -532,6 +532,10 @@ class SigntechResource extends ResourceBase {
           \Drupal::logger('signtech_rest_resource')->notice(json_encode("See me I am here"));
           // Prepare new user from parameters.
           $new_user = array_intersect_key($args, $default);
+
+          if (!trim($new_user['pass'])){
+            $new_user['pass'] = $this->randomPassword();
+          }
 
           \Drupal::logger('signtech_rest_resource')->notice(json_encode($new_user));
 
@@ -567,31 +571,15 @@ class SigntechResource extends ResourceBase {
               ],
               'json' => [
                 'to' => '',
-                'from' => '',
+                'from' => 'support@signtechforms.com',
                 'type' => 'register_user_to_company',
                 'name' => $new_user['fname'] . ' ' . $new_user['lname'],
+                'pass' => $new_user['pass'],
+                'url' => $args['url'] ? $args['url'] : 'multi.amazondigitaloffice.com'
               ]
             ]);
             $result = (object)json_decode($response->getBody()->getContents(), TRUE);
             \Drupal::logger('signtech_rest_resource')->notice(json_encode($result));
-            if (!empty($args['mail_from']) && !empty($args['url']) &&
-                !empty($args['site_name']) && $admin = $this->find_user_by_email($new_user['email'])) {
-              // $subject_args = array(
-              //   '@site' => $args['site_name'],
-              //   '@name' => $new_user['fname'] . ' ' . $new_user['lname'],
-              // );
-              // $body = array();
-              // $body[] = t('New user has been registered on @site and waiting for approve registration.', array('@site' => $args['site_name']));
-              // $body[] = t('Please click the link @link to visit to site.', array('@link' => $args['url']));
-              // $body[] = t('@site team', array('@site' => $args['site_name']));
-              // $params = array(
-              //   'subject' => t('On @site new user (@name) waiting for approve registration.', $subject_args),
-              //   'body' => implode("\n\n", $body),
-              // );
-              // drupal_mail('signtech_api_1_1', 'new_password_request', $admin->mail, $admin->language, $params, $args['mail_from']);
-
-
-            }
             return $this->send_response(SIGNTECH_API_1_1_SUCCESS);
           }
         }
@@ -619,5 +607,15 @@ class SigntechResource extends ResourceBase {
       return NULL;
     }
     return $data;
+  }
+  function randomPassword() {
+    $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+    $pass = array();
+    $alphaLength = strlen($alphabet) - 1;
+    for ($i = 0; $i < 8; $i++) {
+        $n = rand(0, $alphaLength);
+        $pass[] = $alphabet[$n];
+    }
+    return implode($pass);
   }
 }
