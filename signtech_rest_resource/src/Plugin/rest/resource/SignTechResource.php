@@ -48,6 +48,7 @@ define('SIGNTECH_API_1_1_IP_BLOCKED', -14);
 class SigntechResource extends ResourceBase {
 
   protected  $base_url = "https://2w3tn83u78.execute-api.eu-west-2.amazonaws.com/v1";
+  protected  $from_email_address = "support@signtechforms.com";
 
    /**
    * Responds to entity GET requests.
@@ -525,11 +526,8 @@ class SigntechResource extends ResourceBase {
       if (!empty($args['mail']) &&
           !empty($args['language']) && !empty($args['company'])) {
         // Check if exist user name or user mail.
-
-        \Drupal::logger('signtech_rest_resource')->notice(json_encode("See me I am here"));
         if ($this->email_exists($args['mail']) === FALSE) {
 
-          \Drupal::logger('signtech_rest_resource')->notice(json_encode("See me I am here"));
           // Prepare new user from parameters.
           $new_user = array_intersect_key($args, $default);
 
@@ -571,11 +569,11 @@ class SigntechResource extends ResourceBase {
               ],
               'json' => [
                 'to' => $new_user['email'],
-                'from' => 'support@signtechforms.com',
+                'from' => $this->from_email_address,
                 'type' => 'register_user_to_company',
                 'name' => $new_user['fname'] . ' ' . $new_user['lname'],
                 'pass' => $new_user['pass'],
-                'url' => $args['url'] ? $args['url'] : 'multi.amazondigitaloffice.com'
+                'url' => $args['url'] ? $args['url'] : 'https://multi.amazondigitaloffice.com'
               ]
             ]);
             $result = (object)json_decode($response->getBody()->getContents(), TRUE);
