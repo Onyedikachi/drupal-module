@@ -570,7 +570,7 @@ class SigntechResource extends ResourceBase {
                 'Content-Type' => 'application/json'
               ],
               'json' => [
-                'to' => $new_user['mail'],
+                'to' => $new_user['email'],
                 'from' => 'support@signtechforms.com',
                 'type' => 'register_user_to_company',
                 'name' => $new_user['fname'] . ' ' . $new_user['lname'],
