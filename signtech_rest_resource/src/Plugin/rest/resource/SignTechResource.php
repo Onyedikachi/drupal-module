@@ -188,7 +188,7 @@ class SigntechResource extends ResourceBase {
      $data['first_name'] = $user->get('field_first_name')->value;
      $data['last_name'] = $user->get('field_last_name')->value;
      $data['company'] = $user->get('field_cid')->value;
-     $data['admin'] = $user->get('field_phoenix')->value;
+     $data['admin'] = $user->get('field_phoenix')->value == 1;
      $data['expiration'] = strtotime('+1 day');
      $data['company_name'] = '';
      $data['reseller'] = '';
@@ -233,7 +233,7 @@ class SigntechResource extends ResourceBase {
       $user->set("field_last_name", $fname);
       $user->set("field_cid", $cid);
       $user->set("field_phone", $phone);
-      $user->set("field_phoenix", $phoenix);
+      $user->set("field_phoenix", $phoenix ? $phoenix : 0);
 
       // Optional.
       $language = $language ? $language: 'en';
@@ -398,6 +398,7 @@ class SigntechResource extends ResourceBase {
           'status' => 1,
           'pass' => $data->password,
           'init' => $data->email,
+          'phoenix' => 1
       );
 
       $nu = $this->create_user($newUser);
