@@ -230,7 +230,7 @@ class SigntechResource extends ResourceBase {
 
       // note name is email from drupal 7
       $user->set("field_first_name", $fname);
-      $user->set("field_last_name", $fname);
+      $user->set("field_last_name", $lname);
       $user->set("field_cid", $cid);
       $user->set("field_phone", $phone);
       $user->set("field_phoenix", $phoenix ? $phoenix : 0);
