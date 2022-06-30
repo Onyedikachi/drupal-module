@@ -318,12 +318,18 @@ class SigntechResource extends ResourceBase {
     ->condition('mail', $email)
     ->execute();
 
+    \Drupal::logger('signtech_rest_resource')->notice(json_encode($ids));
+
+
     return count($ids) > 0;
   }
   public function user_id_exists($uid){
     $ids = \Drupal::entityQuery('user')
     ->condition('uid', $uid)
     ->execute();
+
+    \Drupal::logger('signtech_rest_resource')->notice(json_encode($ids));
+
 
     return count($ids) > 0;
   }
@@ -350,6 +356,8 @@ class SigntechResource extends ResourceBase {
         ->condition('uid', $uid)
         ->execute();
 
+        \Drupal::logger('signtech_rest_resource')->notice(json_encode($ids));
+
         $user_id = $ids[0];
         $user = User::load($user_id);
     }
@@ -371,6 +379,16 @@ class SigntechResource extends ResourceBase {
 
     return $company;
   }
+  public function company_name_exists($name){
+    $ids = \Drupal::entityQuery('companies')
+        ->condition('name', $name)
+        ->execute();
+
+    \Drupal::logger('signtech_rest_resource')->notice(json_encode($ids));
+
+
+    return count($ids) > 0;
+  }
 
   /**
   *  Company Registration handling.
@@ -385,19 +403,33 @@ class SigntechResource extends ResourceBase {
       $response = array('success'=> false, 'message'=> 'Invalid request.');
       return $this->send_response($response);
     }
+
+    $response = array('success' => false, 'message' => array());
+
+    // check if company exists
+    $companyNameExits = $this->company_name_exists(trim($data->name));
+    if ($companyNameExits) $response['message'][] = 'This company name is already in use.';
+    // check if email exists
+
+    $email = trim($data->email);
+    $userExits = $this->email_exists($email);
+    if ($userExits) $response['message'][] = 'The e-mail address is already in use.';
+
+    if ($companyNameExits || $userExits) return $this->send_response($response);
+
     $database = \Drupal::database();
     $transaction = $database->startTransaction();
     try{
       // Insert the phoenix user
       $newUser = array(
-          'name' => $data->email,
+          'name' => $email,
           'fname' => $data->first_name,
           'lname' => $data->last_name,
           'phone' => $data->phone,
           'email' => $data->email,
           'status' => 1,
           'pass' => $data->password,
-          'init' => $data->email,
+          'init' => $email,
           'phoenix' => 1
       );
 
@@ -445,7 +477,7 @@ class SigntechResource extends ResourceBase {
       $df = $date = \Drupal::service('date.formatter');
       $company = array(
           'name' => $data->name,
-          'email' => $data->email,
+          'email' => $email,
           'enabled' => 1,
           'api_secret' => $apisecret,
           'payment_options' => $data->method,
@@ -480,8 +512,8 @@ class SigntechResource extends ResourceBase {
           'Content-Type' => 'application/json'
         ],
         'json' => [
-          'to' => '',
-          'from' => '',
+          'to' => $email,
+          'from' => $this->from_email_address,
           'type' => 'register_company_created',
           'name' => $data->name ? $data->name : "Test Company",
         ]
