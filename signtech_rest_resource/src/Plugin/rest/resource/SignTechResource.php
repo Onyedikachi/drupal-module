@@ -430,7 +430,8 @@ class SigntechResource extends ResourceBase {
           'status' => 1,
           'pass' => $data->password,
           'init' => $email,
-          'phoenix' => 1
+          'phoenix' => 1,
+          'cid' => $args['cid']
       );
 
       $nu = $this->create_user($newUser);
