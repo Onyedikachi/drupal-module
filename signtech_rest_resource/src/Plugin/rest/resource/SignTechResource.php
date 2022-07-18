@@ -149,11 +149,11 @@ class SigntechResource extends ResourceBase {
         "Company with name $name , and email $email was created successfully"
           : "an error occured while creating company $name";
 
-    return $this->send_response([
+    return [
       "success" =>  $result == 1 ,
       'message' => $message,
       'cid' => $cid
-    ]);
+    ];
   }
   public function all_users (){
     $ids = \Drupal::entityQuery('user')
@@ -454,6 +454,17 @@ class SigntechResource extends ResourceBase {
       ]);
 
       \Drupal::logger('signtech_rest_resource')->notice("About to display package");
+    //   CREATE TABLE stripe_payments (
+    //     id int not null auto_increment PRIMARY KEY,
+    //     amount int(11) NOT NULL,
+    //     currency varchar(255) NULL,
+    //     cid int(11) NULL,
+    //     reseller_id int(11) NULL,
+    //     payment_id varchar(255) NULL,
+    //     data longtext
+    // );
+
+
 
       $package = (object)json_decode($response->getBody()->getContents(), TRUE);
       \Drupal::logger('signtech_rest_resource')->notice(json_encode($package));
@@ -523,7 +534,13 @@ class SigntechResource extends ResourceBase {
       $result = (object)json_decode($response->getBody()->getContents(), TRUE);
       \Drupal::logger('signtech_rest_resource')->notice(json_encode($result));
 
-      return $this->send_response(array('success' => true));
+      return $this->send_response(
+        array(
+          'success' => true,
+          'cid' => $new_company['cid'],
+          'reseller_id' => $args['cid']
+        )
+      );
     }
     catch (Exception $e) {
         // On any exception rollback the transaction, since not all of the data above could be inserted properly
