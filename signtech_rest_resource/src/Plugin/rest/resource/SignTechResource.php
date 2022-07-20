@@ -549,6 +549,7 @@ class SigntechResource extends ResourceBase {
           'voucher_used' => empty($data->voucher) ? NULL : $data->voucher,
       );
 
+      \Drupal::logger('signtech_rest_resource')->notice(json_encode($data));
       $new_company = $this->create_company($company);
 
       \Drupal::logger('signtech_rest_resource')->notice(json_encode($data));
