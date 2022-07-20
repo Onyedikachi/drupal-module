@@ -70,6 +70,8 @@ class SigntechResource extends ResourceBase {
     $function = $params['function'];
 
     switch ($function) {
+      case 'activate_company':
+        return $this->activate_company($params);
       case 'create_user':
         return $this->create_user_migration_handler($params);
       case 'login':
@@ -83,6 +85,23 @@ class SigntechResource extends ResourceBase {
       default:
         return $this->default_Message();
     }
+  }
+
+  public function activate_company($data){
+    $cid = $data['cid'];
+
+    $response = [
+      "success" => false,'message' => "could not enable the company"
+    ];
+
+    if ($company = $this->find_company_by_id($cid)){
+      $company->enabled = 1;
+      $company->save();
+      $response['success'] = true;
+      $response['message'] = 'company has been enabled';
+    }
+
+    return $this->send_response($response);
   }
 
   public function create_company_handler($data){
@@ -397,7 +416,7 @@ class SigntechResource extends ResourceBase {
     if (count($ids) < 1){
       return $company;
     }
-    $cid = count($ids) > 0? $ids[0]: $ids;
+    $cid = $ids[0];
 
     $company = Company::load($cid);
     return $company;
