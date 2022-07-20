@@ -513,7 +513,7 @@ class SigntechResource extends ResourceBase {
       $company = array(
           'name' => $data->name,
           'email' => $email,
-          'enabled' => 1,
+          'enabled' => empty($data->enabled) ? NULL : $data->enabled,
           'api_secret' => $apisecret,
           'payment_options' => $data->method,
           'payment_category' => $data->pid,
