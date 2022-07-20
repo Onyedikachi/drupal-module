@@ -120,6 +120,12 @@
       $fields['voucher_used'] = BaseFieldDefinition::create('string')
       ->setLabel(t('VoucherUsed'))
       ->setDescription(t('The price paid for the Package by the Company'));
+      $fields['enabled'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('enabled'))
+      ->setDescription(t('Determines if company is enabled'));
+      $fields['data'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(t('payment_data'))
+      ->setDescription(t('The payment data for company'));
 
       return $fields;
   }
