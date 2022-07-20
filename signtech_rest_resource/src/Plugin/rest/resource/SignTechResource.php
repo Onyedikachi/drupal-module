@@ -31,6 +31,7 @@ define('SIGNTECH_API_1_1_USER_STATUS_UNMODIFIED', -11);
 define('SIGNTECH_API_1_1_MAIL_SENDING_FAILED', -12);
 define('SIGNTECH_API_1_1_USER_BLOCKED', -13);
 define('SIGNTECH_API_1_1_IP_BLOCKED', -14);
+define('SIGNTECH_API_1_1_USER_COMPANY_DISABLED', -15);
 
 
 /**
@@ -141,6 +142,9 @@ class SigntechResource extends ResourceBase {
     $company->set('payment_options', $data['payment_options']);
     $company->set('payment_price', $data['payment_price']);
     $company->set('voucher_used', $data['voucher_used']);
+
+    $company->set('enabled', $data['enabled']);
+    $company->set('data', $data['pay_data']);
 
     $result = $company->save();
 
@@ -285,12 +289,30 @@ class SigntechResource extends ResourceBase {
 
     if ($id = \Drupal::service('user.auth')
           ->authenticate($username, $password)) {
-        if ($token = $this->prepare_jwt($id)){
-          return $this->send_response($token);
+
+        if ($is_company_enabled = $this->is_user_company_enabled($id)){
+          if ($token = $this->prepare_jwt($id)){
+            return $this->send_response($token);
+          }
+          return $this->send_response(SIGNTECH_API_1_1_USER_NOT_EXISTS);
         }
-        return $this->send_response(SIGNTECH_API_1_1_USER_NOT_EXISTS);
+        return $this->send_response(SIGNTECH_API_1_1_USER_COMPANY_DISABLED);
     }
     return  $this->send_response(SIGNTECH_API_1_1_USER_AUTHENTICATION_FAILED);
+  }
+  public function is_user_company_enabled($id){
+    if($user =  $this->user_by_id($id)){
+      $cid = $user['company'];
+      \Drupal::logger('signtech_rest_resource')->notice(json_encode($user));
+
+      $ids = \Drupal::entityQuery('companies')
+      ->condition('cid', $cid)
+      ->condition('enabled', 1)
+      ->execute();
+
+      return count($ids) > 0;
+    }
+    return false;
   }
   public function prepare_jwt($id){
     $expiration = strtotime('+24 hour');
@@ -370,13 +392,14 @@ class SigntechResource extends ResourceBase {
         ->condition('cid', $cid)
         ->execute();
 
+    $ids = array_keys($ids);
+
     if (count($ids) < 1){
       return $company;
     }
+    $cid = count($ids) > 0? $ids[0]: $ids;
 
-    $cid = $ids[0];
     $company = Company::load($cid);
-
     return $company;
   }
   public function company_name_exists($name){
