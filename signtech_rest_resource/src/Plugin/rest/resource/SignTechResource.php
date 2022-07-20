@@ -143,7 +143,7 @@ class SigntechResource extends ResourceBase {
     $company->set('payment_price', $data['payment_price']);
     $company->set('voucher_used', $data['voucher_used']);
 
-    $company->set('enabled', $data['enabled']);
+    $company->set('enabled', $data['enabled'] ? (int)$data['enabled'] : 0);
     $company->set('data', $data['pay_data']);
 
     $result = $company->save();
