@@ -162,7 +162,7 @@ class SigntechResource extends ResourceBase {
     $company->set('payment_price', $data['payment_price']);
     $company->set('voucher_used', $data['voucher_used']);
 
-    $company->set('enabled', $data['enabled'] ? (int)$data['enabled'] : 0);
+    $company->set('enabled', $data['enabled']);
     $company->set('data', $data['pay_data']);
 
     $result = $company->save();
@@ -532,7 +532,8 @@ class SigntechResource extends ResourceBase {
       $company = array(
           'name' => $data->name,
           'email' => $email,
-          'enabled' => empty($data->enabled) ? NULL : $data->enabled,
+          'enabled' => !empty($data->enabled)&& $data->enabled == 1
+             ? 1 : 0,
           'api_secret' => $apisecret,
           'payment_options' => $data->method,
           'payment_category' => $data->pid,
@@ -549,7 +550,7 @@ class SigntechResource extends ResourceBase {
           'voucher_used' => empty($data->voucher) ? NULL : $data->voucher,
       );
 
-      \Drupal::logger('signtech_rest_resource')->notice(json_encode($data));
+      \Drupal::logger('signtech_rest_resource')->notice(json_encode($company));
       $new_company = $this->create_company($company);
 
       \Drupal::logger('signtech_rest_resource')->notice(json_encode($data));
