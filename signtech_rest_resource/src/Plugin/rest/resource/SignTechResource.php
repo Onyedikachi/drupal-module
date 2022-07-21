@@ -257,6 +257,7 @@ class SigntechResource extends ResourceBase {
       $user->set("field_cid", $cid);
       $user->set("field_phone", $phone);
       $user->set("field_phoenix", $phoenix ? $phoenix : 0);
+      $user->set("field_rid", $rid);
 
       // Optional.
       $language = $language ? $language: 'en';
@@ -549,7 +550,8 @@ class SigntechResource extends ResourceBase {
         'pass' => $data->password,
         'init' => $email,
         'phoenix' => 1,
-        'cid' => $new_company['cid']
+        'cid' => $new_company['cid'],
+        'rid' => $args['cid']
     );
 
     $nu = $this->create_user($newUser);
@@ -648,6 +650,7 @@ class SigntechResource extends ResourceBase {
           $new_user['init'] = $new_user['email'];
           $new_user['status'] = 1;
 
+          $new_user['rid'] = $new_user['cid'];
 
           // $new_user['data']['args'] = $args;
           \Drupal::logger('signtech_rest_resource')->notice(json_encode($new_user));
