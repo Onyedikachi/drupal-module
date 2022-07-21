@@ -462,23 +462,6 @@ class SigntechResource extends ResourceBase {
     $database = \Drupal::database();
     $transaction = $database->startTransaction();
     try{
-      // Insert the phoenix user
-      $newUser = array(
-          'name' => $email,
-          'fname' => $data->first_name,
-          'lname' => $data->last_name,
-          'phone' => $data->phone,
-          'email' => $data->email,
-          'status' => 1,
-          'pass' => $data->password,
-          'init' => $email,
-          'phoenix' => 1,
-          'cid' => $args['cid']
-      );
-
-      $nu = $this->create_user($newUser);
-      \Drupal::logger('signtech_rest_resource')->notice(json_encode($nu));
-
 
       $uuid_service = \Drupal::service('uuid');
       $apisecret = md5($uuid_service->generate());
@@ -554,6 +537,24 @@ class SigntechResource extends ResourceBase {
       $new_company = $this->create_company($company);
 
       \Drupal::logger('signtech_rest_resource')->notice(json_encode($data));
+
+      // Insert the phoenix user
+      $newUser = array(
+        'name' => $email,
+        'fname' => $data->first_name,
+        'lname' => $data->last_name,
+        'phone' => $data->phone,
+        'email' => $data->email,
+        'status' => 1,
+        'pass' => $data->password,
+        'init' => $email,
+        'phoenix' => 1,
+        'cid' => $new_company['cid']
+    );
+
+    $nu = $this->create_user($newUser);
+    \Drupal::logger('signtech_rest_resource')->notice(json_encode($nu));
+
 
 
       // TODO: set company api
