@@ -216,7 +216,7 @@ class SigntechResource extends ResourceBase {
      $data['company_name'] = '';
      $data['reseller'] = '';
      $data['company_api'] = '';
-     $data['rid'] = '';
+     $data['rid'] = $user->get('field_rid')->value;
      $data['icon'] = '';
      $data['template'] = '';
      $data['company_secret'] = '';
